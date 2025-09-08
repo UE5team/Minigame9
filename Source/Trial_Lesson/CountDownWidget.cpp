@@ -59,11 +59,11 @@ void UCountDownWidget::UpdateCountdown()
 	}
 	else
 	{
-		CountdownText->SetText(FText::FromString(TEXT("GO!"))); (
+	/*	CountdownText->SetText(FText::FromString(TEXT("GO!"))); (
 			GetWorld()->GetTimerManager().ClearTimer(countdowntimer);
 		GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
 			{
 				this->RemoveFromPersent();
-			});
+			});*/
 	}
 }
