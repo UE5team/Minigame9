@@ -7,22 +7,20 @@
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 
-void UCountDownWidget::StartCountdown()
-{
+void UCountDownWidget::StartCountdown( ) {
 	cressent_count = 3;
-	UpdateCountdown();
-	GetWorld()->GetTimerManager().SetTimer(countdowntimer, this, &UCountDownWidget::UpdateCountdown, 1.0f, true);
+	UpdateCountdown( );
+	GetWorld( )->GetTimerManager( ).SetTimer(countdowntimer, this, &UCountDownWidget::UpdateCountdown, 1.0f, true);
+	UE_LOG(LogTemp, Warning, TEXT("StartCount True"));
 }
 
-void UCountDownWidget::NativeConstruct()
-{
-	Super::NativeConstruct();
+void UCountDownWidget::NativeConstruct( ) {
+	Super::NativeConstruct( );
 	cressent_count = 3;
 }
 
-UCountDownWidget* UCountDownWidget::ShowCountdown(UObject* WorldContextObject)
-{
-	if (!WorldContextObject) 
+UCountDownWidget* UCountDownWidget::ShowCountdown(UObject* WorldContextObject) {
+	if (!WorldContextObject)
 	{
 		return nullptr;
 	}
@@ -34,36 +32,38 @@ UCountDownWidget* UCountDownWidget::ShowCountdown(UObject* WorldContextObject)
 		return nullptr;
 	}
 
-	UCountDownWidget* Widget = CreateWidget<UCountDownWidget>(World, UCountDownWidget::StaticClass());
+	UCountDownWidget* Widget = CreateWidget<UCountDownWidget>(World, UCountDownWidget::StaticClass( ));
 
 	if (Widget)
 	{
 		Widget->AddToViewport(100);
-		Widget->StartCountdown();
+		Widget->StartCountdown( );
 	}
 
 	return Widget;
 }
 
-void UCountDownWidget::UpdateCountdown()
+void UCountDownWidget::UpdateCountdown() 
 {
-	if (!CountdownText) 
+	
+	if (!CountdownText)
 	{
 		return;
 	}
 
-	if (cressent_count>0)
+	if (cressent_count > 0)
 	{
 		CountdownText->SetText(FText::AsNumber(cressent_count));
 		cressent_count--;
+		UE_LOG(LogTemp, Warning, TEXT("UpdateCountdown True"));
 	}
 	else
 	{
-	/*	CountdownText->SetText(FText::FromString(TEXT("GO!"))); (
-			GetWorld()->GetTimerManager().ClearTimer(countdowntimer);
-		GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
-			{
-				this->RemoveFromPersent();
-			});*/
+		CountdownText->SetText(FText::FromString(TEXT("GO!")));
+		GetWorld( )->GetTimerManager( ).ClearTimer(countdowntimer);
+		GetWorld( )->GetTimerManager( ).SetTimerForNextTick([ this ] ( )
+															{
+																this->RemoveFromParent( );
+															});
 	}
 }

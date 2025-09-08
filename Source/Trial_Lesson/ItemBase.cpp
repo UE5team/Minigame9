@@ -45,7 +45,7 @@ void AItemBase::OnPickup(ACharacterBase* PickupInstigator)
         // キャラ側でカウント増やす
         PickupInstigator->AddItemCount();
 
-        UE_LOG(LogTemp, Log, TEXT("%s picked up by %s"), *ItemName, *PickupInstigator->GetName());
+        //UE_LOG(LogTemp, Log, TEXT("%s picked up by %s"), *ItemName, *PickupInstigator->GetName());
 
         // 破壊
         Destroy();

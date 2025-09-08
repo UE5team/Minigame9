@@ -22,6 +22,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Countdown")
 	void StartCountdown();
 
+	UFUNCTION(BlueprintCallable, Category = "Countdown")
+	void UpdateCountdown( );
+
 protected:
 	virtual void NativeConstruct() override;
 	UPROPERTY(meta = (BindWidget))
@@ -31,5 +34,5 @@ protected:
 
 	FTimerHandle countdowntimer;
 
-	void UpdateCountdown();
+	
 };

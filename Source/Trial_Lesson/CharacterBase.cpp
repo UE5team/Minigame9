@@ -124,7 +124,7 @@ void ACharacterBase::Look(const FInputActionValue& Value)
 
     if (!LookAxisValue.IsNearlyZero())
     {
-        UE_LOG(LogTemp, Warning, TEXT("LookAxisValue: X=%f, Y=%f"), LookAxisValue.X, LookAxisValue.Y);
+        //UE_LOG(LogTemp, Warning, TEXT("LookAxisValue: X=%f, Y=%f"), LookAxisValue.X, LookAxisValue.Y);
     }
 }
 
@@ -144,5 +144,5 @@ void ACharacterBase::Tick(float DeltaTime)
 void ACharacterBase::AddItemCount()
 {
     ItemCount++;
-    UE_LOG(LogTemp, Log, TEXT("Item Count: %d"), ItemCount);
+
 }
