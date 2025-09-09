@@ -28,6 +28,7 @@ protected:
     UPROPERTY( meta = ( BindWidget ) )
     UTextBlock* CountdownText;
 
+
     int32 cressent_count;
 
     FTimerHandle countdowntimer;

@@ -47,7 +47,7 @@ UCountDownWidget* UCountDownWidget::ShowCountdown( UObject* WorldContextObject, 
     }
 
     // ˆÀ‘S‚ÉWorld‚ðŽæ“¾inullptr‚Å‚à—Ž‚¿‚È‚¢j
-    UWorld* World = GEngine ? GEngine->GetWorldFromContextObject( WorldContextObject, EGetWorldErrorMode::LogAndReturnNull ) : nullptr;
+    UWorld* World = WorldContextObject->GetWorld( );
     if ( !World ) {
         UE_LOG( LogTemp, Warning, TEXT( "ShowCountdown: World is nullptr" ) );
         return nullptr;
