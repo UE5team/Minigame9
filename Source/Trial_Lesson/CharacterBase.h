@@ -10,15 +10,14 @@ class UInputMappingContext;
 class UInputAction;
 
 UCLASS(Blueprintable)
-class TRIAL_LESSON_API ACharacterBase : public ACharacter
-{
-	GENERATED_BODY()
+class TRIAL_LESSON_API ACharacterBase : public ACharacter {
+	GENERATED_BODY( )
 
 public:
-	ACharacterBase();
+	ACharacterBase( );
 
 protected:
-	virtual void BeginPlay() override;
+	virtual void BeginPlay( ) override;
 
 	// アイテムの所持数を管理
 	UPROPERTY(BlueprintReadWrite, Category = "Inventory")
@@ -44,9 +43,9 @@ protected:
 
 	void Look(const FInputActionValue& Value);
 	void Move(const FInputActionValue& Value);
-	void StartJump();
-	void StopJump();
-	void ResetMoveBools();
+	void StartJump( );
+	void StopJump( );
+	void ResetMoveBools( );
 
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
 	bool bFrontMoveActionExist;
@@ -78,5 +77,15 @@ public:
 	int32 ItemCount;
 
 	// アイテムを拾ったときに呼ぶ
-	void AddItemCount();
+	void AddItemCount( );
+
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	void SetCameraLocation(FVector NewLocation);
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true") )
+	class UCameraComponent* PlayerCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	class USpringArmComponent* SpringArmComp;
 };
