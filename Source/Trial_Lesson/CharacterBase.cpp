@@ -5,10 +5,16 @@
 #include "InputAction.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 // コンストラクタ
 ACharacterBase::ACharacterBase()
 {
+    SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+    SpringArmComp->SetupAttachment(RootComponent);
+    PlayerCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("PlayerCamera"));
+    PlayerCamera->SetupAttachment(SpringArmComp);
     PrimaryActorTick.bCanEverTick = true;
 
     BaseTurnRate = 45.f;
@@ -57,6 +63,14 @@ void ACharacterBase::BeginPlay()
             ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
         {
             Subsystem->AddMappingContext(DefaultMappingContext, 0);
+        }
+    }
+    if (!PlayerCamera)
+    {
+        PlayerCamera = FindComponentByClass<UCameraComponent>( );
+        if (PlayerCamera)
+        {
+            UE_LOG(LogTemp, Log, TEXT("Camera Find"));
         }
     }
 }
@@ -145,4 +159,16 @@ void ACharacterBase::AddItemCount()
 {
     ItemCount++;
 
+}
+
+void ACharacterBase::SetCameraLocation(FVector NewLocation) 
+{
+    if (PlayerCamera)
+    {
+        PlayerCamera->SetWorldLocation(NewLocation);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("PlayerCamera not"));
+    }
 }
