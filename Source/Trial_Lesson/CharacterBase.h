@@ -82,6 +82,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 	void SetCameraLocation(FVector NewLocation);
 
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	void SetCameraDetached(bool bDetach);
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true") )
 	class UCameraComponent* PlayerCamera;
