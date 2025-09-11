@@ -172,3 +172,20 @@ void ACharacterBase::SetCameraLocation(FVector NewLocation)
         UE_LOG(LogTemp, Warning, TEXT("PlayerCamera not"));
     }
 }
+
+void ACharacterBase::SetCameraDetached(bool bDetach) 
+{
+    if (bDetach)
+    {
+        PlayerCamera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+        UE_LOG(LogTemp, Warning, TEXT("Camera Detach"));
+    }
+    else
+    {
+        if (SpringArmComp)
+        {
+            PlayerCamera->AttachToComponent(SpringArmComp, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+            UE_LOG(LogTemp, Warning, TEXT("Camera Attach"));
+        }
+    }
+}
