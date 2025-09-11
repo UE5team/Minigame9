@@ -169,7 +169,18 @@ void ACharacterBase::SetCameraLocation(FVector NewLocation)
     }
     else
     {
-        UE_LOG(LogTemp, Warning, TEXT("PlayerCamera not"));
+        UE_LOG(LogTemp, Warning, TEXT("PlayerCamera not L"));
+    }
+}
+
+void ACharacterBase::SetCameraRotation(FRotator NewRotation) {
+    if (PlayerCamera)
+    {
+        PlayerCamera->SetWorldRotation(NewRotation);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("PlayerCamera not R"));
     }
 }
 
@@ -187,5 +198,16 @@ void ACharacterBase::SetCameraDetached(bool bDetach)
             PlayerCamera->AttachToComponent(SpringArmComp, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
             UE_LOG(LogTemp, Warning, TEXT("Camera Attach"));
         }
+    }
+}
+
+void ACharacterBase::SetFixedCameraMode(bool bEnable) {
+    if (bEnable)
+    {
+        bUseControllerRotationYaw = false;
+    }
+    else
+    {
+        bUseControllerRotationYaw = true;
     }
 }
