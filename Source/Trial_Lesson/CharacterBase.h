@@ -89,8 +89,10 @@ public:
 	void SetCameraDetached(bool bDetach);
 
 	UFUNCTION(BlueprintCallable, Category = "Camera")
-	void SetFixedCameraMode(bool bEnable);
+	void EnableMouseLook(bool bEnable);
 
+private:
+	bool isHorizontalMovementActive;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true") )
