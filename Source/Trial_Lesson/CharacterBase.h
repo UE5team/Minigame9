@@ -83,7 +83,14 @@ public:
 	void SetCameraLocation(FVector NewLocation);
 
 	UFUNCTION(BlueprintCallable, Category = "Camera")
+	void SetCameraRotation(FRotator NewRotation);
+
+	UFUNCTION(BlueprintCallable, Category = "Camera")
 	void SetCameraDetached(bool bDetach);
+
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	void SetFixedCameraMode(bool bEnable);
+
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true") )
