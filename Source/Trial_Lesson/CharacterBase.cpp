@@ -32,6 +32,7 @@ ACharacterBase::ACharacterBase()
     bLeftMoveActionExist = false;
     bRightMoveActionExist = false;
     bJumpActionExist = false;
+    isHorizontalMovementActive = true;
 
     ItemCount = 0;
 }
@@ -98,12 +99,14 @@ void ACharacterBase::Move(const FInputActionValue& Value)
     FVector2D MovementVector = Value.Get<FVector2D>();
     if (Controller)
     {
-        AddMovementInput(GetActorForwardVector(), MovementVector.Y);
-        AddMovementInput(GetActorRightVector(), MovementVector.X);
+        if (isHorizontalMovementActive) {
+            AddMovementInput(GetActorForwardVector( ), MovementVector.Y);
+        }
+        AddMovementInput(GetActorRightVector( ), MovementVector.X);
     }
 
-    bFrontMoveActionExist = (MovementVector.X > 0.1f);
-    bBackMoveActionExist = (MovementVector.X < -0.1f);
+    bFrontMoveActionExist = ( MovementVector.X > 0.1f );
+    bBackMoveActionExist = ( MovementVector.X < -0.1f );
     bRightMoveActionExist = (MovementVector.Y > 0.1f);
     bLeftMoveActionExist = (MovementVector.Y < -0.1f);
 }
@@ -201,13 +204,15 @@ void ACharacterBase::SetCameraDetached(bool bDetach)
     }
 }
 
-void ACharacterBase::SetFixedCameraMode(bool bEnable) {
-    if (bEnable)
+void ACharacterBase::EnableMouseLook(bool bEnable) {
+    if (!bEnable)
     {
         bUseControllerRotationYaw = false;
+        isHorizontalMovementActive = false;
     }
     else
     {
         bUseControllerRotationYaw = true;
+        isHorizontalMovementActive = true;
     }
 }
