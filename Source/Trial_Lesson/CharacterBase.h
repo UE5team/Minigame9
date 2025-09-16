@@ -100,4 +100,44 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	class USpringArmComponent* SpringArmComp;
+protected:
+	/** スライドアクションのアセットを登録する変数 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<class UInputAction> SlideAction;
+
+	/** スライディングを開始します */
+	void StartSlide( );
+
+	/** スライディングを終了します */
+	void StopSlide( );
+
+	/** スライディングが可能か判定します */
+	bool CanSlide( ) const;
+
+	// --- スライディング用プロパティ ---
+
+	/** スライディング中かどうかのフラグ */
+	UPROPERTY(BlueprintReadOnly, Category = "Sliding")
+	bool bIsSliding;
+
+	/** スライディングの持続時間（秒） */
+	UPROPERTY(EditDefaultsOnly, Category = "Sliding")
+	float SlideDuration = 1.5f;
+
+	/** スライディング中の地面摩擦（低いほど滑る） */
+	UPROPERTY(EditDefaultsOnly, Category = "Sliding")
+	float SlidingGroundFriction = 0.1f;
+
+	/** スライディング開始時の推進力 */
+	UPROPERTY(EditDefaultsOnly, Category = "Sliding")
+	float SlideImpulseForce = 1500.0f;
+
+private:
+	/** スライディング終了を管理するタイマー */
+	FTimerHandle SlideTimerHandle;
+
+	/** スライディング前の地面摩擦を保存する変数 */
+	float DefaultGroundFriction;
+
+	float DefaultCapsuleHalfHeight;
 };

@@ -8,6 +8,9 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
+#include "Components/CapsuleComponent.h"
+#include "TimerManager.h"
+
 // コンストラクタ
 ACharacterBase::ACharacterBase()
 {
@@ -35,6 +38,7 @@ ACharacterBase::ACharacterBase()
     isHorizontalMovementActive = true;
 
     ItemCount = 0;
+
 }
 
 // アイテム取得
@@ -74,6 +78,16 @@ void ACharacterBase::BeginPlay()
             UE_LOG(LogTemp, Log, TEXT("Camera Find"));
         }
     }
+
+    // キャラクタームーブメントコンポーネントとカプセルコンポーネントからデフォルト値を取得して保存
+    if (UCharacterMovementComponent* MoveComp = GetCharacterMovement( ))
+    {
+        DefaultGroundFriction = MoveComp->GroundFriction;
+    }
+    if (UCapsuleComponent* CapComp = GetCapsuleComponent( ))
+    {
+        DefaultCapsuleHalfHeight = CapComp->GetUnscaledCapsuleHalfHeight( );
+    }
 }
 
 // 入力設定
@@ -90,6 +104,8 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
         EIC->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacterBase::StopJump);
 
         EIC->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACharacterBase::Look);
+
+        EIC->BindAction(SlideAction, ETriggerEvent::Triggered, this, &ACharacterBase::StartSlide);
     }
 }
 
@@ -215,4 +231,71 @@ void ACharacterBase::EnableMouseLook(bool bEnable) {
         bUseControllerRotationYaw = true;
         isHorizontalMovementActive = true;
     }
+}
+
+bool ACharacterBase::CanSlide( ) const {
+    // キャラクタームーブメントコンポーネントが有効かチェック
+    if (!GetCharacterMovement( ))
+    {
+        return false;
+    }
+
+    // 「スライディング中でない」かつ「地面にいる」場合にtrueを返す
+    return !bIsSliding && !GetCharacterMovement( )->IsFalling( );
+}
+
+void ACharacterBase::StartSlide( ) {
+    // スライディング可能な状態かチェック
+    if (CanSlide( ))
+    {
+        bIsSliding = true;
+
+        // --- 物理挙動の変更 ---
+        if (UCharacterMovementComponent* MoveComp = GetCharacterMovement( ))
+        {
+            // 地面摩擦を下げて滑りやすくする
+            MoveComp->GroundFriction = SlidingGroundFriction;
+            // しゃがみ状態にして移動速度などに影響させる（任意）
+            MoveComp->bWantsToCrouch = true;
+        }
+
+        // --- コリジョンの変更 ---
+        if (UCapsuleComponent* CapComp = GetCapsuleComponent( ))
+        {
+            // カプセルの高さを半分にする（しゃがみと同じ高さ）
+            CapComp->SetCapsuleHalfHeight(DefaultCapsuleHalfHeight / 2.0f);
+        }
+
+        // --- 推進力の追加 ---
+        // キャラクターの前方へ瞬間的に力を加える
+        LaunchCharacter(GetActorRightVector( ) * SlideImpulseForce, true, true);
+
+        // --- タイマーの設定 ---
+        // SlideDuration秒後にStopSlideを呼び出すタイマーをセット
+        GetWorld( )->GetTimerManager( ).SetTimer(
+            SlideTimerHandle, this, &ACharacterBase::StopSlide, SlideDuration, false);
+    }
+}
+
+void ACharacterBase::StopSlide( ) {
+    bIsSliding = false;
+
+    // --- 物理挙動を元に戻す ---
+    if (UCharacterMovementComponent* MoveComp = GetCharacterMovement( ))
+    {
+        // 地面摩擦を元の値に戻す
+        MoveComp->GroundFriction = DefaultGroundFriction;
+        // しゃがみ状態を解除
+        MoveComp->bWantsToCrouch = false;
+    }
+
+    // --- コリジョンを元に戻す ---
+    if (UCapsuleComponent* CapComp = GetCapsuleComponent( ))
+    {
+        // カプセルの高さを元の値に戻す
+        CapComp->SetCapsuleHalfHeight(DefaultCapsuleHalfHeight);
+    }
+
+    // 念のためタイマーをクリア
+    GetWorld( )->GetTimerManager( ).ClearTimer(SlideTimerHandle);
 }
