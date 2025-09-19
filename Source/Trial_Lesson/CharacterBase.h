@@ -59,6 +59,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Status")
 	void SetHp(int hp);
 
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	void SetMp(int mp);
+
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void PickupItem(AItemBase* Item);
@@ -116,6 +119,8 @@ private:
 	float DefaultCapsuleHalfHeight;
 
 	int now_hp;
+
+	int now_mp;
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Sliding")
 	bool bIsSliding;

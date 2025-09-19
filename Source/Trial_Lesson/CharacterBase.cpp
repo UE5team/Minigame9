@@ -270,6 +270,9 @@ void ACharacterBase::SetHp(int hp) {
     now_hp = hp;
 }
 
+void ACharacterBase::SetMp(int mp) {
+    now_mp = mp;
+}
 
 void ACharacterBase::PickupItem(AItemBase* Item) {
     if (!Item) return;
