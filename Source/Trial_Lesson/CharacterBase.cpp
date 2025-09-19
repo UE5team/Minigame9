@@ -19,6 +19,11 @@ void ACharacterBase::Tick(float DeltaTime) {
         AddControllerYawInput(LookAxisValue.X * BaseTurnRate * DeltaTime);
         AddControllerPitchInput(LookAxisValue.Y * BaseLookUpRate * DeltaTime);
     }
+
+    if (now_hp <= 0 && !isDead) {
+        isDead = true;
+        UE_LOG(LogTemp, Log, TEXT("Dead!!"));
+    }
 }
 
 
@@ -105,7 +110,8 @@ ACharacterBase::ACharacterBase( ) {
     isHorizontalMovementActive = true;
 
     ItemCount = 0;
-
+    now_hp = 1;
+    isDead = false;
 }
 
 

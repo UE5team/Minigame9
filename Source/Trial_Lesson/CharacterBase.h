@@ -98,6 +98,7 @@ public:
 private:
 	bool isHorizontalMovementActive;
 
+	bool isDead;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Sliding")
 	float SlideDuration = 1.5f;
