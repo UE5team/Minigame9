@@ -13,72 +13,37 @@ UCLASS(Blueprintable)
 class TRIAL_LESSON_API ACharacterBase : public ACharacter {
 	GENERATED_BODY( )
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = ( AllowPrivateAccess = "true" ))
+	class UCameraComponent* PlayerCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	class USpringArmComponent* SpringArmComp;
+
 public:
-	ACharacterBase( );
+	virtual void Tick(float DeltaTime) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
 	virtual void BeginPlay( ) override;
 
-	// アイテムの所持数を管理
-	UPROPERTY(BlueprintReadWrite, Category = "Inventory")
-	TMap<FString, int32> ItemCounts;
+protected:
+	bool CanSlide( ) const;
 
-	// アイテムを拾う関数
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	void PickupItem(AItemBase* Item);
+public:
+	ACharacterBase( );
+	void AddItemCount( );
 
-	// 移動とジャンプ
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	UInputAction* MoveAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	UInputAction* JumpAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	UInputMappingContext* DefaultMappingContext;
-
-	// マウス回転
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	UInputAction* LookAction;
-
+protected:
 	void Look(const FInputActionValue& Value);
 	void Move(const FInputActionValue& Value);
 	void StartJump( );
 	void StopJump( );
 	void ResetMoveBools( );
-
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
-	bool bFrontMoveActionExist;
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
-	bool bBackMoveActionExist;
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
-	bool bLeftMoveActionExist;
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
-	bool bRightMoveActionExist;
-	UPROPERTY(BlueprintReadOnly, Category = "Input")
-	bool bJumpActionExist;
-
-	// キャラ回転スピード
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float BaseTurnRate;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float BaseLookUpRate;
-
-	// --- ここを追加 ---
-private:
-	FVector2D LookAxisValue; // Tickで回転処理用の入力値を保持
+	void StartSlide( );
+	void StopSlide( );
 
 public:
-	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	// アイテムを拾った数
-	UPROPERTY(BlueprintReadOnly, Category = "Items")
-	int32 ItemCount;
-
-	// アイテムを拾ったときに呼ぶ
-	void AddItemCount( );
-
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 	void SetCameraLocation(FVector NewLocation);
 
@@ -91,53 +56,82 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 	void EnableMouseLook(bool bEnable);
 
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	void SetHp(int hp);
+
+protected:
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void PickupItem(AItemBase* Item);
+
+
 private:
-	bool isHorizontalMovementActive;
+	FVector2D LookAxisValue;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true") )
-	class UCameraComponent* PlayerCamera;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	class USpringArmComponent* SpringArmComp;
-protected:
-	/** スライドアクションのアセットを登録する変数 */
+	UPROPERTY(BlueprintReadWrite, Category = "Inventory")
+	TMap<FString, int32> ItemCounts;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* MoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* JumpAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputMappingContext* DefaultMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* LookAction;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<class UInputAction> SlideAction;
 
-	/** スライディングを開始します */
-	void StartSlide( );
 
-	/** スライディングを終了します */
-	void StopSlide( );
+public:
+	UPROPERTY(BlueprintReadOnly, Category = "Items")
+	int32 ItemCount;
 
-	/** スライディングが可能か判定します */
-	bool CanSlide( ) const;
 
-	// --- スライディング用プロパティ ---
 
-	/** スライディング中かどうかのフラグ */
-	UPROPERTY(BlueprintReadOnly, Category = "Sliding")
-	bool bIsSliding;
+private:
+	bool isHorizontalMovementActive;
 
-	/** スライディングの持続時間（秒） */
+
 	UPROPERTY(EditDefaultsOnly, Category = "Sliding")
 	float SlideDuration = 1.5f;
 
-	/** スライディング中の地面摩擦（低いほど滑る） */
 	UPROPERTY(EditDefaultsOnly, Category = "Sliding")
 	float SlidingGroundFriction = 0.1f;
 
-	/** スライディング開始時の推進力 */
 	UPROPERTY(EditDefaultsOnly, Category = "Sliding")
 	float SlideImpulseForce = 1500.0f;
 
-private:
-	/** スライディング終了を管理するタイマー */
 	FTimerHandle SlideTimerHandle;
 
-	/** スライディング前の地面摩擦を保存する変数 */
 	float DefaultGroundFriction;
 
 	float DefaultCapsuleHalfHeight;
+
+	int now_hp;
+protected:
+	UPROPERTY(BlueprintReadOnly, Category = "Sliding")
+	bool bIsSliding;
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	bool bFrontMoveActionExist;
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	bool bBackMoveActionExist;
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	bool bLeftMoveActionExist;
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	bool bRightMoveActionExist;
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
+	bool bJumpActionExist;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	float BaseTurnRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	float BaseLookUpRate;
 };
