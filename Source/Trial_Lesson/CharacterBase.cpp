@@ -23,6 +23,7 @@ void ACharacterBase::Tick(float DeltaTime) {
     if (now_hp <= 0 && !isDead) {
         isDead = true;
         UE_LOG(LogTemp, Log, TEXT("Dead!!"));
+        RespawnCharacter( );
     }
 }
 
@@ -120,6 +121,29 @@ void ACharacterBase::AddItemCount( ) {
 
 }
 
+void ACharacterBase::RespawnCharacter( ) {
+    if (isRespawn) {
+        DisableInput(Cast<APlayerController>(GetController( )));
+        SetActorHiddenInGame(true);
+        SetActorEnableCollision(false);
+
+        FTimerHandle RespawnHandle;
+        GetWorldTimerManager( ).SetTimer(
+            RespawnHandle,
+            [ this ] ( )
+            {
+                SetActorLocation(RespawnLocation);
+                SetActorRotation(RespawnRotaiton);
+
+                SetActorHiddenInGame(false);
+                SetActorEnableCollision(true);
+                EnableInput(Cast<APlayerController>(GetController( )));
+            },
+            3.0f,
+            false
+        );
+    }
+}
 
 void ACharacterBase::Look(const FInputActionValue& Value) {
     LookAxisValue = Value.Get<FVector2D>( );
@@ -272,6 +296,12 @@ void ACharacterBase::SetHp(int hp) {
 
 void ACharacterBase::SetMp(int mp) {
     now_mp = mp;
+}
+
+void ACharacterBase::Respawn( ) {
+    isRespawn = true;
+    RespawnLocation = FVector(0, 0, 100);
+    RespawnRotaiton = FRotator(0, 0, 0);
 }
 
 void ACharacterBase::PickupItem(AItemBase* Item) {

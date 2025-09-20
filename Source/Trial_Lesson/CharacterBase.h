@@ -34,6 +34,9 @@ public:
 	ACharacterBase( );
 	void AddItemCount( );
 
+private:
+	void RespawnCharacter( );
+
 protected:
 	void Look(const FInputActionValue& Value);
 	void Move(const FInputActionValue& Value);
@@ -62,6 +65,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Status")
 	void SetMp(int mp);
 
+	UFUNCTION(BlueprintCallable, Category = "Respawn")
+	void Respawn( );
+
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void PickupItem(AItemBase* Item);
@@ -69,6 +75,8 @@ protected:
 
 private:
 	FVector2D LookAxisValue;
+	FVector RespawnLocation;
+	FRotator RespawnRotaiton;
 
 protected:
 
@@ -102,6 +110,8 @@ private:
 	bool isHorizontalMovementActive;
 
 	bool isDead;
+
+	bool isRespawn;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Sliding")
 	float SlideDuration = 1.5f;
